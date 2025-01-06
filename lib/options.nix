@@ -9,6 +9,15 @@ let
     ;
 in
 {
+  # option types
+  overlayType = lib.mkOptionType {
+    name = "nixpkgs-overlay";
+    description = "nixpkgs overlay";
+    descriptionClass = "noun";
+    check = lib.isFunction;
+    merge = lib.mergeOneOption;
+  };
+
   ## nicer names
   mk = lib.mkOption;
   stringList = self.mkStringListOption;
@@ -22,6 +31,12 @@ in
   raw = self.mkConfigOption';
   port = self.mkPortOption;
   portList = self.mkPortListOption;
+  enum = args@{
+    enums ? [],
+    ...
+  }: mkOption ({
+    type = types.enum enums;
+  } // (removeAttrs ["enums"] args));
 
   package = default: description: mkOption {
     inherit description default;
